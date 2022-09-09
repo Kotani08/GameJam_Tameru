@@ -19,7 +19,7 @@ public class JumpButton : MonoBehaviour,IPointerDownHandler,IPointerUpHandler
     {
         background.transform.localPosition = pointerData.position;
         background.gameObject.SetActive(true);
-		//Debug.Log(pointerData);
+		playerControl.JumpCharge();
 	}
 
     public void OnPointerUp(PointerEventData eventData)
