@@ -52,6 +52,8 @@ public class PlayerControl : MonoBehaviour
 
     public bool MaxFlag=false;
 
+    private bool walk=false;
+
     #endregion
 
     void Start()
@@ -102,7 +104,18 @@ public class PlayerControl : MonoBehaviour
     {
       #region 移動関連
       float x = Input.GetAxisRaw("Horizontal");
+      if(0f!=Input.GetAxisRaw("Horizontal")){walk=false;}
       horizontal = new Vector2(x,0);
+
+      if(0f==Input.GetAxisRaw("Horizontal"))
+        {
+          if(walk==false)
+          {
+            rb.velocity = Vector2.zero;
+            walk=true;
+          }
+        }
+
       rb.AddForce(horizontal* speed * Time.fixedDeltaTime);
 
       #region 後追加の走る処理
