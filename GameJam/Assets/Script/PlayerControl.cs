@@ -39,6 +39,21 @@ public class PlayerControl : MonoBehaviour
     public Vector3 FastPoj;
     public Animator anim;
 
+    #region 音関連
+    [SerializeField]
+    AudioClip ChargeSE;
+    [SerializeField]
+    AudioClip MaxSE;
+    [SerializeField]
+    AudioClip JumpSE;
+
+    [SerializeField]
+    SoundManager soundManager;
+
+    public bool MaxFlag=false;
+
+    #endregion
+
     void Start()
     {
         FastPoj = rb.transform.localPosition;
@@ -58,19 +73,21 @@ public class PlayerControl : MonoBehaviour
         }
         if(JampCharge == true)
         {
+          if(jumpPower==1000f){soundManager.PlaySe(ChargeSE);}
+
             if(jumpPower <= jumpPowerMax)
             {
                 if(Gage.transform.localPosition.y <= -3.6f)
                 {
-                float y = Gage.transform.localPosition.y+0.01f;
+                float y = Gage.transform.localPosition.y+0.01f*5f;
                 Gage.transform.localPosition = new Vector2(0,y);
                 }
-            jumpPower += 4.2f;
+            jumpPower += 4.2f*5f;
             }
         }
         if(JampCharge == false && Gage.transform.localPosition.y >= -8.5f)
         {
-            float y = Gage.transform.localPosition.y-0.1f;
+            float y = Gage.transform.localPosition.y-0.1f*2f;
             Gage.transform.localPosition = new Vector2(0,y);
         }
         if(Gage.transform.localPosition.y < -8.5f)
@@ -91,23 +108,16 @@ public class PlayerControl : MonoBehaviour
       #region 後追加の走る処理
     if (x > 0) 
     {
-      rb.transform.localScale = new Vector3(2, 2, 2);
+      rb.transform.localScale = new Vector3(2f, 2f, 1);
         anim.SetBool("run", true);
     }
     else if (x < 0) 
     {
-      rb.transform.localScale = new Vector3(-2, 2, 2);
+      rb.transform.localScale = new Vector3(-2f, 2f, 1);
         anim.SetBool("run", true);
-    }
-    else
-    {
-        //anim.SetBool("run", false);
     }
     #endregion
 
-      //movingDirecion = new Vector2(x,z);
-	  //movingDirecion.Normalize();
-	  //movingVelocity = movingDirecion * speed;
       if(Input.GetKeyDown(KeyCode.Space)){JumpCharge();}
       if (Input.GetKeyUp(KeyCode.Space)) {Jump();}
       //new input systemで使ってたやつ
@@ -127,10 +137,12 @@ public class PlayerControl : MonoBehaviour
     {
         JampCharge = true;
         JumpPosition = rb.transform.position;
+
     }
 
     public void Jump()
     {
+      soundManager.PlaySe(JumpSE);
       anim.SetBool("jump", true);
         JampCharge=false;
       if(jumpCount >=0)
@@ -188,12 +200,12 @@ public class PlayerControl : MonoBehaviour
       horizontal = new Vector2(floatingJoystick.Horizontal*2f,0);
       if (horizontal.x > 0) 
       {
-        rb.transform.localScale = new Vector3(2, 2, 2);
+        rb.transform.localScale = new Vector3(2f, 2f, 1f);
         anim.SetBool("run", true);
       }
       else if (horizontal.x < 0) 
       {
-        rb.transform.localScale = new Vector3(-2, 2, 2);
+        rb.transform.localScale = new Vector3(-2f, 2f, 1f);
         anim.SetBool("run", true);
       }
       else
@@ -211,7 +223,6 @@ public class PlayerControl : MonoBehaviour
       floatingJoystick.transform.Find("Background").gameObject.SetActive(false);
       floatingJoystick.transform.Find ("Background").transform.Find ("Handle").localPosition =new Vector2(0,0);
       
-      Button.SetActive(false);
       Gage.transform.localPosition = new Vector2(0,-8.5f);
       jumpPower = 1000;
       JampCharge = false;
